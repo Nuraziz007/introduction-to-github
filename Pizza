@@ -1,0 +1,237 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Pizza Topping Quiz</title> 
+    <style> 
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            background-color: #f8f8f8; 
+        } 
+        .pizza-container { 
+            margin-top: 20px; 
+        } 
+        .pizza-image { 
+            width: 300px; 
+            height: 300px; 
+            object-fit: cover; 
+            border-radius: 15px; 
+        } 
+        .toppings { 
+            margin-top: 20px; 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+        } 
+        .topping { 
+            padding: 10px 20px; 
+            margin: 5px; 
+            background-color: #ddd; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: background-color 0.3s; 
+        } 
+        .topping.correct { 
+            background-color: green; 
+            color: white; 
+        } 
+        .topping.incorrect { 
+            background-color: red; 
+            color: white; 
+        } 
+        .next-btn { 
+            margin-top: 20px; 
+            padding: 10px 20px; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            display: none; 
+        } 
+        .next-btn:hover { 
+            background-color: #0056b3; 
+        } 
+    </style> 
+</head> 
+<body> 
+    <h1>Pizza Topping Quiz</h1> 
+    <p>Guess the toppings for each pizza!</p> 
+    <div class="pizza-container"> 
+        <h2 id="pizza-name"></h2> 
+        <img id="pizza-image" class="pizza-image" src="" alt="Pizza"> 
+        <div id="toppings-container" class="toppings"></div> 
+    </div> 
+    <button id="next-btn" class="next-btn">Next Pizza</button> 
+ 
+    <script> 
+        const pizzas = [ 
+            { 
+                name: "Mighty Meaty", 
+                toppings: ["2 pepperoni", "2 ham", "1 sausage", "beef", "onions", "mushrooms"], 
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/15-piz-mighty-meaty?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]" 
+            }, 
+            { 
+                name: "Meatilicious", 
+                toppings: ["pepperoni", "ham", "sausage", "bacon", "chicken"], 
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/1358-piz-meatilicious?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]" 
+            }, 
+            { 
+                name: "Meateor", 
+                toppings: ["pepperoni", "sausage", "meatball", "bacon", "beef"], 
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/1105-piz-Meateor?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]" 
+            }, 
+            { 
+                name: "American Hot", 
+                toppings: ["3 pepperoni", "onions", "jalapenos"], 
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/1046-piz-american-hot?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]" 
+            }, 
+            { 
+                name: "Vegi Supreme", 
+                toppings: ["onions", "mushrooms", "peppers", "sweetcorn", "tomatoes"], 
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/24-piz-vegi-supreme?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]" 
+            }, 
+            {
+                name: "Vegi Volcano",
+                toppings: ["onions", "peppers", "jalapenos", "tomatoes", "extra cheese"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/59-piz-vegi-volcano?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Ham and Pineapple",
+                toppings: ["3 ham", "pineapple"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/26-piz-ham-and-pineapple?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Tuna Supreme",
+                toppings: ["tuna", "onions", "sweetcorn"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/54-piz-tuna-supreme?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Texas BBQ",
+                toppings: ["chicken", "bacon", "onions", "peppers"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/17-piz-texas-bbq?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Cheeseburger",
+                toppings: ["onions", "tomatoes", "beef", "gherkins", "burger sauce"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/1594-piz-the-cheeseburger?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Delight Chicken",
+                toppings: ["delight cheese", "onions", "peppers", "chicken", "tomatoes"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/pcdl-delight-chicken?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "New Yorker",
+                toppings: ["2 pepperoni", "2 ham", "bacon", "mushrooms"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/39-piz-new-yorker?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Chicken Feast",
+                toppings: ["chicken", "mushrooms", "sweetcorn"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/55-piz-chicken-feast?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Hot and Spicy",
+                toppings: ["beef", "onions", "peppers", "jalapenos"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/14-piz-hot-and-spicy?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Ranch BBQ",
+                toppings: ["2 pepperoni", "bacon", "chicken", "beef"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/1474-piz-ranch-bbq?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Tandoori Hot",
+                toppings: ["onions", "mushrooms", "peppers", "jalapenos", "tandoori chicken"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/23-piz-dominos-tandoori-hot?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Meatfielder",
+                toppings: ["pepperoni", "ham", "bacon", "meatballs", "chorizo"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/1585-piz-the-meatfielder?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Vegan Margarita",
+                toppings: ["vegan cheese", "tomatoes", "herbs"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/1802-piz-plant-based-margheri-tastic-large-italian-style-crust?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            },
+            {
+                name: "Vegan PepperoNAY",
+                toppings: ["3 vegan pepperoni"],
+                image: "https://cdn.dominosmedia.co.uk/i/dominos/1799-piz-plant-based-peppy-roni-medium?fmt=auto&layer0=[pecrop=614,825,32,259&w=320]"
+            }
+        ];
+              // Add remaining pizzas here following the same structure... 
+        ]; 
+ 
+        let currentPizzaIndex = 0; 
+        let selectedToppings = []; 
+ 
+        const pizzaNameElement = document.getElementById("pizza-name"); 
+        const pizzaImageElement = document.getElementById("pizza-image");const toppingsContainer = document.getElementById("toppings-container"); 
+        const nextButton = document.getElementById("next-btn"); 
+ 
+        function loadPizza(index) { 
+            const pizza = pizzas[index]; 
+            pizzaNameElement.textContent = pizza.name; 
+            pizzaImageElement.src = pizza.image; 
+            toppingsContainer.innerHTML = ""; 
+            selectedToppings = []; 
+ 
+            const allToppings = [...pizza.toppings, "pineapple", "tuna", "gherkin", "burger sauce"]; 
+            shuffleArray(allToppings); 
+ 
+            allToppings.forEach(topping => { 
+                const toppingElement = document.createElement("div"); 
+                toppingElement.textContent = topping; 
+                toppingElement.className = "topping"; 
+                toppingElement.addEventListener("click", () => selectTopping(toppingElement, pizza.toppings)); 
+                toppingsContainer.appendChild(toppingElement); 
+            }); 
+ 
+            nextButton.style.display = "none"; 
+        } 
+ 
+        function selectTopping(element, correctToppings) { 
+            const topping = element.textContent; 
+ 
+            if (selectedToppings.includes(topping)) { 
+                return; 
+            } 
+ 
+            selectedToppings.push(topping); 
+ 
+            if (correctToppings.includes(topping)) { 
+                element.classList.add("correct"); 
+            } else { 
+                element.classList.add("incorrect"); 
+            } 
+ 
+            if (correctToppings.every(t => selectedToppings.includes(t))) { 
+                nextButton.style.display = "block"; 
+            } 
+        } 
+ 
+        function shuffleArray(array) { 
+            for (let i = array.length - 1; i > 0; i--) { 
+                const j = Math.floor(Math.random() * (i + 1)); 
+                [array[i], array[j]] = [array[j], array[i]]; 
+            } 
+        } 
+ 
+        nextButton.addEventListener("click", () => { 
+            if (currentPizzaIndex < pizzas.length - 1) { 
+                currentPizzaIndex++; 
+                loadPizza(currentPizzaIndex); 
+            } else { 
+                alert("Congratulations! You've completed the quiz!"); 
+            } 
+        }); 
+ 
+        loadPizza(currentPizzaIndex); 
+    </script> 
+</body> 
+</html>
